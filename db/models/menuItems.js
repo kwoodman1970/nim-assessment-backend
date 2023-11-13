@@ -63,4 +63,9 @@ const put = async (id, body) => {
   return menuItem;
 };
 
-module.exports = { getAll, getOne, create, put, MenuItems };
+const remove = async (id) => {
+  await MenuItems.findByIdAndDelete(id);
+  return id;
+};
+
+module.exports = { getAll, getOne, create, put, remove, MenuItems };
