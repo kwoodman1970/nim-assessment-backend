@@ -68,4 +68,11 @@ const remove = async (id) => {
   return id;
 };
 
-module.exports = { getAll, getOne, create, put, remove, MenuItems };
+const search = async (queryString) => {
+  const expression = new RegExp(queryString, "i");
+  const query = { $or: [{ name: expression }, { description: expression }] };
+  const menuItems = await MenuItems.find(query);
+  return menuItems;
+};
+
+module.exports = { getAll, getOne, create, put, remove, search, MenuItems };
