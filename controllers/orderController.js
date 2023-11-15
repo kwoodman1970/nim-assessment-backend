@@ -76,7 +76,15 @@ const getTotalSales = async (req, res) => {
 
 const getByStatus = async (req, res) => {
   try {
-    const orders = await Order.getByStatus(req.params.status);
+    if (!req.query.s) {
+      throw new Error("Status not specified");
+    }
+    const filter = {
+      from: req.query?.from,
+      before: req.query?.before,
+      s: req.query.s
+    };
+    const orders = await Order.getMany(filter);
     res.send(orders);
   } catch (error) {
     res.status(500).send(error);

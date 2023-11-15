@@ -61,6 +61,10 @@ const makeMongooseFilter = (filter) => {
     mongooseFilter.updatedAt = { $lt: new Date(filter.before) };
   }
 
+  if (filter.s) {
+    mongooseFilter.status = { $eq: filter.s };
+  }
+
   return mongooseFilter;
 };
 
@@ -96,17 +100,11 @@ const remove = async (id) => {
   return order.id;
 };
 
-const getByStatus = async (status) => {
-  const orders = await Order.find({ status }).populate("items");
-  return orders;
-};
-
 module.exports = {
   getMany,
   getOne,
   create,
   update,
   remove,
-  getByStatus,
   Order
 };
