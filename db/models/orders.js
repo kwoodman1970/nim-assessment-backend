@@ -47,12 +47,35 @@ orderSchema.set("toJSON", {
 orderSchema.statics.calcTotal = (items) =>
   items.reduce((total, item) => total + item.price * item.quantity, 0);
 
+const makeMongooseFilter = (filter) => {
+  const mongooseFilter = {};
+
+  if (filter.from != null && filter.before != null) {
+    mongooseFilter.updatedAt = {
+      $gte: new Date(filter.from),
+      $lt: new Date(filter.before)
+    };
+  } else if (filter.from) {
+    mongooseFilter.updatedAt = { $gte: new Date(filter.from) };
+  } else if (filter.before) {
+    mongooseFilter.updatedAt = { $lt: new Date(filter.before) };
+  }
+
+  if (filter.s) {
+    mongooseFilter.status = { $eq: filter.s };
+  }
+
+  return mongooseFilter;
+};
+
 // order model
 const Order = mongoose.model("Order", orderSchema);
 
-const getAll = async () => {
+const getMany = async (filter = {}) => {
   // populate each item
-  const orders = await Order.find().populate("items.item");
+  const orders = await Order.find(makeMongooseFilter(filter)).populate(
+    "items.item"
+  );
 
   return orders;
 };
@@ -77,17 +100,11 @@ const remove = async (id) => {
   return order.id;
 };
 
-const getByStatus = async (status) => {
-  const orders = await Order.find({ status }).populate("items");
-  return orders;
-};
-
 module.exports = {
-  getAll,
+  getMany,
   getOne,
   create,
   update,
   remove,
-  getByStatus,
   Order
 };

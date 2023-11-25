@@ -2,7 +2,7 @@ const Order = require("../db/models/orders.js");
 
 const getAll = async (req, res) => {
   try {
-    const orders = await Order.getAll();
+    const orders = await Order.getMany();
     res.send(orders);
   } catch (error) {
     res.status(500).send(error);
@@ -58,9 +58,33 @@ const getByCustomer = async (req, res) => {
   }
 };
 
+const getTotalSales = async (req, res) => {
+  try {
+    const filter = { from: req.query?.from, before: req.query?.before };
+    const orders = await Order.getMany(filter);
+    let total = 0.0;
+    orders.forEach((order) => {
+      order.items.forEach((item) => {
+        total += item.item.price * item.quantity;
+      });
+    });
+    res.send({ total });
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
 const getByStatus = async (req, res) => {
   try {
-    const orders = await Order.getByStatus(req.params.status);
+    if (!req.query.s) {
+      throw new Error("Status not specified");
+    }
+    const filter = {
+      from: req.query?.from,
+      before: req.query?.before,
+      s: req.query.s
+    };
+    const orders = await Order.getMany(filter);
     res.send(orders);
   } catch (error) {
     res.status(500).send(error);
@@ -74,5 +98,6 @@ module.exports = {
   update,
   remove,
   getByCustomer,
+  getTotalSales,
   getByStatus
 };
