@@ -1,7 +1,7 @@
 require("dotenv").config();
 const {
   create,
-  getAll,
+  getMany,
   getOne,
   getByStatus,
   update,
@@ -30,9 +30,9 @@ describe("orders", () => {
     await Order.deleteMany({});
   });
 
-  describe("getAll", () => {
+  describe("getMany", () => {
     it("should return an array of orders", async () => {
-      const orders = await getAll();
+      const orders = await getMany();
       expect(orders).toBeInstanceOf(Array);
     });
   });
@@ -72,7 +72,7 @@ describe("orders", () => {
   describe("getByStatus", () => {
     it("should return an array of orders", async () => {
       const order = await create(testOrder);
-      const orders = await getByStatus(order.status);
+      const orders = await getMany({ status: order.status });
       expect(orders).toBeInstanceOf(Array);
     });
   });

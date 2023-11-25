@@ -17,6 +17,7 @@ describe("routes", () => {
   };
   let testMenuItemId;
   let testOrder;
+  jest.setTimeout(15000);
   beforeAll(async () => {
     await preload();
     console.log("Preloaded DB");

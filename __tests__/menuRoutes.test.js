@@ -58,7 +58,7 @@ describe("routes", () => {
   describe("PUT /api/menu/:id", () => {
     it("should update the updatedAt field", async () => {
       const menuItem = await MenuItems.create(testMenuItem);
-      const response = await request(server).patch(`/api/menu/${menuItem._id}`);
+      const response = await request(server).put(`/api/menu/${menuItem._id}`);
       expect(response.body.updatedAt).not.toBe(menuItem.updatedAt);
     });
   });
